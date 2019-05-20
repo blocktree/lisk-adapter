@@ -385,7 +385,6 @@ func (decoder *TransactionDecoder) SubmitRawTransaction(wrapper openwallet.Walle
 		SenderPublicKey: senderPk,
 		Signature:sig,
 	}
-	result,_ := transaction.MarshalJSON()
 
 	resp, err := decoder.wm.Api.SendTransaction(decoder.wm.Context, transaction)
 	if err != nil {
