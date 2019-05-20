@@ -1,0 +1,5 @@
+*.iml
+*/conf/*
+*/data*
+*/openw_data/*
+.idea/*
