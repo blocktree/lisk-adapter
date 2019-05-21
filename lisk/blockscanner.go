@@ -63,7 +63,7 @@ func NewLSKBlockScanner(wm *WalletManager) *LSKBlockScanner {
 	bs.RescanLastBlockCount = maxExtractingSize
 
 	// set task
-	//bs.SetTask(bs.ScanBlockTask)
+	bs.SetTask(bs.ScanBlockTask)
 
 	return &bs
 }
@@ -149,6 +149,27 @@ func (bs *LSKBlockScanner) GetScannedBlockHeader() (*openwallet.BlockHeader, err
 	}
 
 	return &openwallet.BlockHeader{Height: blockHeight, Hash: hash}, nil
+}
+
+//GetCurrentBlockHeader 获取当前区块高度
+func (bs *LSKBlockScanner) GetCurrentBlockHeader() (*openwallet.BlockHeader, error) {
+
+	br := &api.BlockRequest{
+		ListOptions: api.ListOptions{
+			Limit: 0,
+		},
+	}
+	keyBlock, err := bs.wm.Api.GetBlocks(bs.wm.Context, br)
+	if err != nil {
+		return nil, err
+	}
+	blocks := keyBlock.Blocks
+	if blocks == nil || len(blocks) == 0 {
+		return nil, errors.New("blocks is nil")
+	}
+	block := blocks[0]
+
+	return &openwallet.BlockHeader{Height: uint64(block.Height), Hash: string(block.ID)}, nil
 }
 
 //GetBalanceByAddress 查询地址余额
@@ -261,23 +282,33 @@ func (bs *LSKBlockScanner) ExtractTransaction(block *Block, scanTargetFunc openw
 		BlockHeight: block.Height,
 		extractData: make([]*ExtractTxResult, 0),
 	}
+	transactionList := make([]*api.Transaction, 0)
 
-	req := &api.TransactionRequest{
-		Height: int64(block.Height),
-		ListOptions: api.ListOptions{
-			Limit: 300,
-		},
+	for i := 0; i < 10000; i++ {
+		pageSize := 100
+		req := &api.TransactionRequest{
+			Height: int64(block.Height),
+			ListOptions: api.ListOptions{
+				Limit:  pageSize,
+				Offset: i * pageSize,
+			},
+		}
+
+		txInfos, err := bs.wm.Api.GetTransactions(bs.wm.Context, req)
+		if err != nil {
+			log.Errorf("cant find the transaction by height %d ,err : %s", block.Height, err.Error())
+			break
+		}
+		if txInfos.Transactions == nil || len(txInfos.Transactions) == 0 {
+			break
+		}
+		transactionList = append(transactionList, txInfos.Transactions...)
 	}
 
-	txInfos, err := bs.wm.Api.GetTransactions(bs.wm.Context, req)
-	if err != nil {
-		return result, fmt.Errorf("cant find the transaction by height %d ,err : %s", block.Height, err.Error())
-	}
-
-	if txInfos.Transactions != nil && len(txInfos.Transactions) != 0 {
-		for _, v := range txInfos.Transactions {
-			resultTx,err :=	bs.changeTrans(v,scanTargetFunc)
-			if err != nil{
+	if len(transactionList) != 0 {
+		for _, v := range transactionList {
+			resultTx, err := bs.changeTrans(v, scanTargetFunc)
+			if err != nil {
 				bs.wm.Log.Std.Error("trans ID: %d, save unscan record failed. unexpected error: %v", v.ID, err.Error())
 				continue
 			}
@@ -292,7 +323,7 @@ func (bs *LSKBlockScanner) ExtractTransaction(block *Block, scanTargetFunc openw
 
 //ExtractTransaction 提取交易单
 func (bs *LSKBlockScanner) ExtractTransactionSingleTx(block *Block, tx *api.Transaction, scanTargetFunc openwallet.BlockScanTargetFunc) (ExtractTxResult, error) {
-	return bs.changeTrans(tx,scanTargetFunc)
+	return bs.changeTrans(tx, scanTargetFunc)
 
 }
 
@@ -422,7 +453,7 @@ func (bs *LSKBlockScanner) changeTrans(trans *api.Transaction, scanTargetFunc op
 		return resultTx, nil
 	}
 
-	return resultTx,nil
+	return resultTx, nil
 }
 
 //newExtractDataNotify 发送通知
