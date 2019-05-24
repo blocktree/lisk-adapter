@@ -54,7 +54,7 @@ func (wm *WalletManager) GetBlockScanner() openwallet.BlockScanner {
 func (wm *WalletManager) LoadAssetsConfig(c config.Configer) error {
 
 	wm.Config.ServerAPI = c.String("serverAPI")
-	wm.Config.FixFees = c.String("fixFees")
+	wm.Config.FixFees = "0.1"
 	wm.Config.NetworkID = c.String("networkID")
 	//wm.client = NewClient(wm.Config.ServerAPI, false)
 	serverAPIStrs := strings.Split(wm.Config.ServerAPI, ":")

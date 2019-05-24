@@ -366,7 +366,7 @@ func (decoder *TransactionDecoder) SubmitRawTransaction(wrapper openwallet.Walle
 		return nil, fmt.Errorf("serializableTransaction decode failed, unexpected error: %v", err)
 	}
 
-	rawTx.TxID = serializableTransaction.ID
+
 
 	senderPk, err := hex.DecodeString(serializableTransaction.SenderPublicKey)
 	if err != nil {
@@ -386,12 +386,21 @@ func (decoder *TransactionDecoder) SubmitRawTransaction(wrapper openwallet.Walle
 		Signature:sig,
 	}
 
+
 	resp, err := decoder.wm.Api.SendTransaction(decoder.wm.Context, transaction)
 	if err != nil {
 		return nil, err
 	}
 
 	log.Infof("Transaction [%s] submitted to the network successfully.", resp.Result.Message)
+
+
+
+
+	rawTx.TxID,err = transaction.ID()
+	if err != nil {
+		return nil, err
+	}
 
 	rawTx.IsSubmit = true
 
