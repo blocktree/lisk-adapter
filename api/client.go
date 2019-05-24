@@ -44,5 +44,5 @@ func (c *Client) SetHost(host Host) {
 
 // ChangeRandomHost selects a new host from the pool for the client requests
 func (c *Client) ChangeRandomHost() {
-	c.restClient.SetHostURL(c.config.GetRandomHost().GetHostURL())
+	//c.restClient.SetHostURL(c.config.GetRandomHost().GetHostURL())
 }

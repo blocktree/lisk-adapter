@@ -30,7 +30,7 @@ func NewWalletManager() *WalletManager {
 	wm.Decoder = NewAddressDecoder(&wm)
 	wm.TxDecoder = NewTransactionDecoder(&wm)
 	wm.Log = log.NewOWLogger(wm.Symbol())
-	wm.Api = apiclient.NewClient()
+
 	wm.Context = context.TODO()
 	return &wm
 }
@@ -47,6 +47,7 @@ func (wm *WalletManager) GetAccount(address string) (*LSKAccount, error) {
 	if wm.Api == nil {
 		return nil, fmt.Errorf("lisk API is not inited")
 	}
+
 	accountReq := &apiclient.AccountRequest{
 		Address: address,
 		ListOptions: apiclient.ListOptions{

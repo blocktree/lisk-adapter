@@ -67,8 +67,13 @@ func (wm *WalletManager) LoadAssetsConfig(c config.Configer) error {
 				Hostname: serverAPIStrs[0],
 				Port:     p,
 			}
-			wm.Api.SetHost(host)
+			config2 := &api.Config{
+				Host:host,
+				RandomHost:false,
+			}
+			wm.Api = api.NewClientWithCustomConfig(config2)
 		}
+
 	}
 
 	return nil
