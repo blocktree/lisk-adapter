@@ -185,11 +185,12 @@ func (bs *LSKBlockScanner) GetBalanceByAddress(address ...string) ([]*openwallet
 			obj := &openwallet.Balance{
 				Symbol:           bs.wm.Symbol(),
 				Address:          a,
-				Balance:          b.String(),
+				Balance:          ub.String(),
 				UnconfirmBalance: ub.String(),
 				ConfirmBalance:   b.String(),
 			}
 
+			//log.Warn("address:",a,",ubalance:",ub.String(),"confirmBlance:",b.String())
 			addrBalanceArr = append(addrBalanceArr, obj)
 			//return nil, err
 		}

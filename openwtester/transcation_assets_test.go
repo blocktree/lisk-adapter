@@ -121,34 +121,37 @@ func TestTransfer_LSK(t *testing.T) {
 	tm := testInitWalletManager()
 	walletID := "WBgBRo3VTDQLaj8wwgRSZvfgqjK2eYMDQb"
 	accountID := "837Yyhqcd6tyi71z8s9ytYDdFLhs3DTr4tVWp6SuPmJB"
-	to := "7061235840388139206L"
+	to := "18336513363932884586L"
 
 	//accountID := "3biDqABdY66PtH5R8xk2upxz5xcLLpu7pDvpq3Bb9Yec"
 	//to := "7061235840388139206L"
 
 	testGetAssetsAccountBalance(tm, walletID, accountID)
 
-	rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "0.001", "", nil)
-	if err != nil {
-		return
+	for i:= 0 ;i<2 ;i++{
+		rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "0.001", "", nil)
+		if err != nil {
+			return
+		}
+
+		log.Std.Info("rawTx: %+v", rawTx)
+
+		_, err = testSignTransactionStep(tm, rawTx)
+		if err != nil {
+			return
+		}
+
+		_, err = testVerifyTransactionStep(tm, rawTx)
+		if err != nil {
+			return
+		}
+
+		_, err = testSubmitTransactionStep(tm, rawTx)
+		if err != nil {
+			return
+		}
 	}
 
-	log.Std.Info("rawTx: %+v", rawTx)
-
-	_, err = testSignTransactionStep(tm, rawTx)
-	if err != nil {
-		return
-	}
-
-	_, err = testVerifyTransactionStep(tm, rawTx)
-	if err != nil {
-		return
-	}
-
-	_, err = testSubmitTransactionStep(tm, rawTx)
-	if err != nil {
-		return
-	}
 
 }
 
@@ -156,39 +159,41 @@ func TestSummary_LSK(t *testing.T) {
 	tm := testInitWalletManager()
 	walletID := "WBgBRo3VTDQLaj8wwgRSZvfgqjK2eYMDQb"
 	accountID := "837Yyhqcd6tyi71z8s9ytYDdFLhs3DTr4tVWp6SuPmJB"
-	summaryAddress := "7061235840388139206L"
+	summaryAddress := "18336513363932884586L"
 
 	testGetAssetsAccountBalance(tm, walletID, accountID)
 
-	rawTxArray, err := testCreateSummaryTransactionStep(tm, walletID, accountID,
-		summaryAddress, "", "", "0.1",
-		0, 100, nil)
-	if err != nil {
-		log.Errorf("CreateSummaryTransaction failed, unexpected error: %v", err)
-		return
-	}
-
-	//执行汇总交易
-	for _, rawTxWithErr := range rawTxArray {
-
-		if rawTxWithErr.Error != nil {
-			log.Error(rawTxWithErr.Error.Error())
-			continue
-		}
-
-		_, err = testSignTransactionStep(tm, rawTxWithErr.RawTx)
+	for i:=0;i<3;i++{
+		rawTxArray, err := testCreateSummaryTransactionStep(tm, walletID, accountID,
+			summaryAddress, "", "", "0.1",
+			0, 100, nil)
 		if err != nil {
+			log.Errorf("CreateSummaryTransaction failed, unexpected error: %v", err)
 			return
 		}
 
-		_, err = testVerifyTransactionStep(tm, rawTxWithErr.RawTx)
-		if err != nil {
-			return
-		}
+		//执行汇总交易
+		for _, rawTxWithErr := range rawTxArray {
 
-		_, err = testSubmitTransactionStep(tm, rawTxWithErr.RawTx)
-		if err != nil {
-			return
+			if rawTxWithErr.Error != nil {
+				log.Error(rawTxWithErr.Error.Error())
+				continue
+			}
+
+			_, err = testSignTransactionStep(tm, rawTxWithErr.RawTx)
+			if err != nil {
+				return
+			}
+
+			_, err = testVerifyTransactionStep(tm, rawTxWithErr.RawTx)
+			if err != nil {
+				return
+			}
+
+			_, err = testSubmitTransactionStep(tm, rawTxWithErr.RawTx)
+			if err != nil {
+				return
+			}
 		}
 	}
 
