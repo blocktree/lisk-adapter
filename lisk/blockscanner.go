@@ -15,7 +15,7 @@ import (
 const (
 	blockchainBucket = "blockchain" // blockchain dataset
 	//periodOfTask      = 5 * time.Second // task interval
-	maxExtractingSize = 10 // thread count
+	maxExtractingSize = 0 // thread count
 	successTxType     = 0
 )
 
@@ -729,12 +729,36 @@ func (bs *LSKBlockScanner) ScanBlockTask() {
 
 	//重扫前N个块，为保证记录找到
 	for i := currentHeight - bs.RescanLastBlockCount; i < currentHeight; i++ {
-		bs.ScanBlock(i + 1)
+		bs.scanBlock(i + 1)
 	}
 
 	//重扫失败区块
 	bs.RescanFailedRecord()
 
+}
+
+//ScanBlock 扫描指定高度区块
+func (bs *LSKBlockScanner) ScanBlock(height uint64) error {
+
+	block, err := bs.scanBlock(height)
+	if err != nil {
+		return err
+	}
+
+	//通知新区块给观测者，异步处理
+	bs.newBlockNotify(block, false)
+
+	return nil
+}
+
+//ScanBlock 扫描指定高度区块
+func (bs *LSKBlockScanner) scanBlock(height uint64)(*Block, error) {
+
+	block, err := bs.GetBlockByHeight(height)
+	if err != nil {
+		return nil,err
+	}
+	return block,nil
 }
 
 //ExtractTransactionData
