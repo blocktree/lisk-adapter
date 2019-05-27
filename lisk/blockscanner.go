@@ -758,6 +758,11 @@ func (bs *LSKBlockScanner) scanBlock(height uint64)(*Block, error) {
 	if err != nil {
 		return nil,err
 	}
+	_ := bs.BatchExtractTransaction(block)
+	if err != nil {
+		bs.wm.Log.Std.Info("block scanner can not extractRechargeRecords; unexpected error: %v", err)
+		return nil,err
+	}
 	return block,nil
 }
 
