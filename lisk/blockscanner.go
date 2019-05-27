@@ -761,6 +761,24 @@ func (bs *LSKBlockScanner) scanBlock(height uint64)(*Block, error) {
 	return block,nil
 }
 
+
+//SetRescanBlockHeight 重置区块链扫描高度
+func (bs *LSKBlockScanner) SetRescanBlockHeight(height uint64) error {
+	height = height - 1
+	if height < 0 {
+		return fmt.Errorf("block height to rescan must greater than 0.")
+	}
+	block, err := bs.GetBlockByHeight(height)
+	if err != nil {
+		return err
+	}
+
+	bs.wm.SaveLocalNewBlock(height, block.Hash)
+
+	return nil
+}
+
+
 //ExtractTransactionData
 func (bs *LSKBlockScanner) ExtractTransactionData(txid string, scanAddressFunc openwallet.BlockScanTargetFunc) (map[string][]*openwallet.TxExtractData, error) {
 	transReq := &api.TransactionRequest{
