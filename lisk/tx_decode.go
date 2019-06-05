@@ -286,9 +286,6 @@ func (decoder *TransactionDecoder) SignRawTransaction(wrapper openwallet.WalletD
 
 			//sig2,_ := lisk_txsigner.Default.SignTransactionHash(msg, keyBytes, keySignature.EccType)
 
-			key := hex.EncodeToString( keyBytes )
-			pk := keySignature.Address.PublicKey
-			log.Warn( "pk:",pk,"keyBytes:",key)
 
 			if err != nil {
 

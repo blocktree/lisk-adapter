@@ -125,9 +125,9 @@ func TestBlockScanner_ExtractTransactionData(t *testing.T) {
 
 	var (
 		symbol = "LSK"
-		txid   = "18433677331660926746"
+		txid   = "6891565370527412645"
 		addrs  = map[string]string{
-			"7061235840388139206L": "sender",
+			"9789709449210829854L": "sender",
 		}
 	)
 

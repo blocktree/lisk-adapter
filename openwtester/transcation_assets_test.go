@@ -129,7 +129,7 @@ func TestTransfer_LSK(t *testing.T) {
 	testGetAssetsAccountBalance(tm, walletID, accountID)
 
 	for i:= 0 ;i<2 ;i++{
-		rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "0.001", "", nil)
+		rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "100.001", "", nil)
 		if err != nil {
 			return
 		}
