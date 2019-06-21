@@ -76,6 +76,11 @@ func (wm *WalletManager) LoadAssetsConfig(c config.Configer) error {
 
 	}
 
+	wm.Config.DataDir = c.String("dataDir")
+
+	//数据文件夹
+	wm.Config.makeDataDir()
+
 	return nil
 }
 
