@@ -46,6 +46,9 @@ type WalletConfig struct {
 	NetworkID string
 	//固定手续费
 	FixFees string
+
+	DataDir string
+
 }
 
 func NewConfig(symbol string) *WalletConfig {
@@ -69,8 +72,25 @@ func NewConfig(symbol string) *WalletConfig {
 	//钱包服务API
 	c.ServerAPI = ""
 
+
 	//创建目录
 	file.MkdirAll(c.dbPath)
 
 	return &c
+}
+
+
+//创建文件夹
+func (wc *WalletConfig) makeDataDir() {
+
+	if len(wc.DataDir) == 0 {
+		//默认路径当前文件夹./data
+		wc.DataDir = "data"
+	}
+
+	//本地数据库文件路径
+	wc.dbPath = filepath.Join(wc.DataDir, strings.ToLower(wc.Symbol), "db")
+
+	//创建目录
+	file.MkdirAll(wc.dbPath)
 }
