@@ -60,7 +60,7 @@ func (b *Block) BlockHeader(symbol string) *openwallet.BlockHeader {
 	obj.Previousblockhash = b.Previousblockhash
 	obj.Height = b.Height
 	obj.Version = uint64(b.Version)
-	obj.Time = b.Time
+	obj.Time = b.Time + 1464109200
 	obj.Symbol = symbol
 
 	return &obj

@@ -16,6 +16,7 @@
 package openwtester
 
 import (
+	"fmt"
 	"github.com/blocktree/openwallet/openw"
 	"testing"
 
@@ -123,6 +124,7 @@ func TestTransfer_LSK(t *testing.T) {
 	accountID := "837Yyhqcd6tyi71z8s9ytYDdFLhs3DTr4tVWp6SuPmJB"
 	to := "18336513363932884586L"
 
+	fmt.Println(1566829460 - 102720260)
 	//accountID := "3biDqABdY66PtH5R8xk2upxz5xcLLpu7pDvpq3Bb9Yec"
 	//to := "7061235840388139206L"
 
