@@ -64,7 +64,7 @@ func (wm *WalletManager) GetAccount(address string) (*LSKAccount, error) {
 	if q.Accounts != nil && len(q.Accounts) != 0 {
 		account := q.Accounts[0]
 		lskAccount.Balance = IntToBalance(account.Balance)
-		lskAccount.UnconfirmedBalance = IntToBalance(account.UnconfirmedBalance)
+		lskAccount.UnconfirmedBalance = IntToBalance(account.Balance)
 
 	} else {
 		lskAccount.Balance = IntToBalance(0)
